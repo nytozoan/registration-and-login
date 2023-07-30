@@ -1,0 +1,13 @@
+main {
+    display: flex;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+#loggedIn {
+    display: flex;
+    flex-direction: column;
+}
