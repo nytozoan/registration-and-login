@@ -49,10 +49,6 @@ const save = (form) => {
 }
 
 const errorChecking = (email, password, confirmPassword) => {
-  // Error codes
-  // 1 = Password and Confirm Password are not the same
-  // 2 = Password is less than minimum
-  // 3 = Email already exists
   let output = {}
 
   if (password != confirmPassword) {
@@ -63,14 +59,17 @@ const errorChecking = (email, password, confirmPassword) => {
     alert("Password should be at least 5 characters.")
     return 2
   }
+  let pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i) // Copy-pasted regex code that somehow works
+  if (!pattern.test(email)) {
+    alert("Invalid email")
+    return 3
+  }
   for (let i = 0; i < database.length; i++) {
     if (database[i].email == email) {
       alert ("Email already exists.")
-      return 3
+      return 4
     }
   }
-  // Add if email does not end with @*.* return error invalid email
-
   output["email"] = email
   output["password"] = password
   return output
@@ -82,7 +81,7 @@ const registrationFunction = () => {
   let password = formData.password.value
   let confirmPassword = formData.confirmPassword.value
   let cleaned = errorChecking(email, password, confirmPassword)
-  if (typeof(cleaned) == "object") {
+  if (typeof(cleaned) != "number") {
     save(cleaned)
     switchState = 0
     main()
