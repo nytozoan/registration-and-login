@@ -1,13 +1,68 @@
+body {
+    background-image: url("/forest.jpg");
+}
+
 main {
     display: flex;
+    position: absolute;
+    bottom: 25%;
+    left: 25%;
 }
 
 form {
     display: flex;
     flex-direction: column;
+    user-select: none;
 }
 
 #loggedIn {
     display: flex;
     flex-direction: column;
+}
+
+#left-card {
+    background: #574F2A;
+    height: 350px;
+    width: 275px;
+    padding-left: 35px;
+    padding-right: 25px;
+    padding-bottom: 20px;
+    border-top-left-radius: 25%;
+    border-bottom-left-radius: 25%;
+    box-shadow: -10px 10px 10px 10px;
+}
+
+#right-card {
+    background: #84732B;
+    height: 350px;
+    width: 275px;;
+    padding-left: 25px;
+    padding-right: 35px;
+    padding-bottom: 20px;
+    border-top-right-radius: 25%;
+    border-bottom-right-radius: 25%;
+    box-shadow: 10px 10px 10px 10px;
+}
+
+
+#logo-image {
+    user-select: none;
+    width: 50%;
+    clip-path: circle();
+    margin: 25%;
+}
+
+#switcher {
+    width: 100%;
+    color: white;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #1C3A13;
+}
+
+#state-plate {
+    user-select: none;
+    text-align: center;
+    margin: 25%
 }

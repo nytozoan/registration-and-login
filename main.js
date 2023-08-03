@@ -1,35 +1,7 @@
 import './style.css'
+import {register} from './views/register.js'
+import {login} from './views/login.js'
 
-const register = () => {
-  return `
-  <main>
-    <img id="svg-image" alt="svg image placeholder"></img>
-    <form name="registrationData" id="formData">
-      <img id="logo" alt="logo placeholder">
-      <input type="email" id="email" name="email" placeholder="email" required class="form-control">
-      <input type="password" id="password" name="password" placeholder="password" required class="form-control">
-      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="confirm password" required class="form-control">
-      <input type="button" name="submit" value="register" id="submit" class="form-control">
-      <p>Have an account? <a id="switcher">Login here!</a>
-    </form>
-  </main>
-  `
-}
-
-const login = () => {
-  return `
-  <main>
-    <form name="registrationData" id="formData">
-      <img id="logo" alt="logo placeholder" required>
-      <input type="email" id="email" name="email" placeholder="email" required class="form-control">
-      <input type="password" id="password" name="password" placeholder="password" required class="form-control">
-      <input type="button" name="submit" value="login" id="submit" class="form-control">
-      <p>No account yet? <a id="switcher">Register here!</a></p>
-    </form>
-    <img id="svg-image" alt="svg image placeholder"></img>
-  </main>
-`
-}
 
 const loggedInPage = (email) => {
   return `
@@ -41,13 +13,14 @@ const loggedInPage = (email) => {
   `
 }
 
-let database = []
+const database = []
 const save = (form) => {
   form["isloggedin"] = false
   database.push(form)
   console.log("database", database)
 }
 
+let emailPattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i) // Copy-pasted regex code that somehow works
 const errorChecking = (email, password, confirmPassword) => {
   let output = {}
 
@@ -59,17 +32,15 @@ const errorChecking = (email, password, confirmPassword) => {
     alert("Password should be at least 5 characters.")
     return 2
   }
-  let pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i) // Copy-pasted regex code that somehow works
-  if (!pattern.test(email)) {
+  if (!emailPattern.test(email)) {
     alert("Invalid email")
     return 3
   }
-  for (let i = 0; i < database.length; i++) {
-    if (database[i].email == email) {
-      alert ("Email already exists.")
-      return 4
-    }
-  }
+  database.map((account) => {if (account.email == email) {
+    alert ("Email already exists.")
+    return 4
+  }})
+  
   output["email"] = email
   output["password"] = password
   return output
@@ -92,33 +63,39 @@ const loginFunction = () => {
   let formData = document.getElementsByClassName("form-control")
   let email = formData.email.value
   let password = formData.password.value
-  for (let i = 0; i < database.length; i++) {
-    if (database[i].email == email) {
-      if (database[i].password == password) {
-        if (database[i].isloggedin == true) if (confirm("It seems you have been logged in from another account. Log out from the other account?")) database[i].isloggedin = true
-        database[i].isloggedin = true
-        console.log(database)
-        document.getElementById("app").innerHTML = loggedInPage(database[i].email)
+  database.map((account) => {
+    if (account.email == email) {
+      if (account.password == password) {
+        if (account.isloggedin == true) if (confirm("It seems you have been logged in from another device. Log out from the other device to log in here")) {
+          account.isloggedin = false
+        } else return
+        account.isloggedin = true
+        document.getElementById("app").innerHTML = loggedInPage(account.email)
         document.getElementById("logout").onclick = () => {
-        switchState = 0
-        database[i].isloggedin = false
-        main()
-        console.log(database)
-      }
-      return 0
-      } else alert ("Invalid email and/or password.")
-    }
-    else alert("Invalid email and/or password.")
-  }
+          switchState = 0
+          account.isloggedin = false
+          main()
+        }
+      } else alert("Invalid email and/or password.")
+    } else alert("Invalid email and/or password.")
+  })
 }
 
-
-let switchState = 1
+let switchState = 0
 const main = () => {
     if (switchState == 0) {
       document.getElementById('app').innerHTML = login()
     } else if (switchState == 1) {
       document.getElementById('app').innerHTML = register()
+      // register-specific functions
+      document.getElementById("check-availability").onclick = () => {
+        for (let i = 0; i < database.length; i++) {
+          if (formData.email.value == database[i].email) alert("That email is already associated with an account. Please try another.")
+          else if (formData.email.value == "") alert("Write something first ffs!")
+          else if (!emailPattern.test(formData.email.value)) alert("Invalid email.")
+          else alert("Email is available.")
+        }
+      }
     }
     document.getElementById("switcher").onclick = () => {
       if (switchState == 0) switchState = 1
@@ -131,16 +108,13 @@ const main = () => {
       if (formData.submit.value == "register") registrationFunction()
       else if (formData.submit.value == "login") loginFunction()
     }
-    //debug
-    document.getElementById("asd").onclick = () => {
-      fetch("save.json")
-        .then((res) => res.text())
-        .then((text) => {
-          text = JSON.parse(text)
-          database.push(text)
-          console.log(database)
-        })
-        .catch((e) => console.error(e))
-    }
 }
 main()
+fetch("save.json")
+  .then((res) => res.text())
+  .then((text) => {
+    text = JSON.parse(text)
+    database.push(text)
+    console.log(database)
+  })
+  .catch((e) => console.error(e))
