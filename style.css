@@ -46,7 +46,6 @@ form {
 
 
 #logo-image {
-    user-select: none;
     width: 50%;
     clip-path: circle();
     margin: 25%;
@@ -65,4 +64,10 @@ form {
     user-select: none;
     text-align: center;
     margin: 25%
+}
+
+#loggedIn {
+    background: #574F2A;
+    color: white;
+    padding: 50px;
 }

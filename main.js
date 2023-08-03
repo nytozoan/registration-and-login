@@ -1,17 +1,7 @@
 import './style.css'
-import {register} from './views/register.js'
-import {login} from './views/login.js'
-
-
-const loggedInPage = (email) => {
-  return `
-  <div id="loggedIn">
-    <h1>Welcome!</h1>
-    <p>You are logged in as ${email}.</p>
-    <button id="logout">Logout</button>
-  </div>
-  `
-}
+import { register } from './views/register.js'
+import { login } from './views/login.js'
+import { loggedInPage } from './views/loggedInPage'
 
 const database = []
 const save = (form) => {
@@ -36,11 +26,14 @@ const errorChecking = (email, password, confirmPassword) => {
     alert("Invalid email")
     return 3
   }
-  database.map((account) => {if (account.email == email) {
-    alert ("Email already exists.")
-    return 4
-  }})
-  
+  let mapOut
+  database.map((account) => {
+    if (account.email == email) {
+      alert ("Email already exists.")
+      mapOut = 4
+    }
+  })
+  if (mapOut == 4) return 4
   output["email"] = email
   output["password"] = password
   return output
@@ -48,10 +41,7 @@ const errorChecking = (email, password, confirmPassword) => {
 
 const registrationFunction = () => {
   let formData = document.getElementsByClassName("form-control")
-  let email = formData.email.value
-  let password = formData.password.value
-  let confirmPassword = formData.confirmPassword.value
-  let cleaned = errorChecking(email, password, confirmPassword)
+  let cleaned = errorChecking(formData.email.value, formData.password.value, formData.confirmPassword.value)
   if (typeof(cleaned) != "number") {
     save(cleaned)
     switchState = 0
@@ -77,11 +67,11 @@ const loginFunction = () => {
           main()
         }
       } else alert("Invalid email and/or password.")
-    } else alert("Invalid email and/or password.")
+    }
   })
 }
 
-let switchState = 0
+let switchState = 1
 const main = () => {
     if (switchState == 0) {
       document.getElementById('app').innerHTML = login()
@@ -115,6 +105,6 @@ fetch("save.json")
   .then((text) => {
     text = JSON.parse(text)
     database.push(text)
-    console.log(database)
+    console.table(database)
   })
   .catch((e) => console.error(e))

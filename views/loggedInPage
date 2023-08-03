@@ -1,0 +1,9 @@
+export const loggedInPage = (email) => {
+  return `
+  <div id="loggedIn">
+    <h1>Welcome!</h1>
+    <p>You are logged in as ${email}.</p>
+    <button id="logout">Logout</button>
+  </div>
+  `
+}
