@@ -80,10 +80,22 @@ const main = () => {
       // register-specific functions
       document.getElementById("check-availability").onclick = () => {
         for (let i = 0; i < database.length; i++) {
-          if (formData.email.value == database[i].email) alert("That email is already associated with an account. Please try another.")
-          else if (formData.email.value == "") alert("Write something first ffs!")
-          else if (!emailPattern.test(formData.email.value)) alert("Invalid email.")
-          else alert("Email is available.")
+          if (formData.email.value == database[i].email) {
+            alert("That email is already associated with an account. Please try another.")
+            break
+          }
+          else if (formData.email.value == "") {
+            alert("Write something first ffs!")
+            break
+          }
+          else if (!emailPattern.test(formData.email.value)) {
+            alert("Invalid email.")
+            break
+          }
+          else {
+            alert("Email is available.")
+            break
+          }
         }
       }
     }
@@ -100,11 +112,17 @@ const main = () => {
     }
 }
 main()
-fetch("save.json")
-  .then((res) => res.text())
-  .then((text) => {
-    text = JSON.parse(text)
-    database.push(text)
-    console.table(database)
-  })
-  .catch((e) => console.error(e))
+const userDataSample = [
+  {
+    "email": "123@321.com",
+    "password": "556556",
+    "isloggedin": true
+  },
+  {
+    "email": "asd@123.com",
+    "password": "123123",
+    "isloggedin": false
+  }
+]
+for (let i = 0; i < userDataSample.length; i++) database.push(userDataSample[i])
+console.log(database)
